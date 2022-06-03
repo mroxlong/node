@@ -25,10 +25,10 @@ db.connect((err)=>{
 
 app.post("/db/:id",(req, res)=>{
     console.log("Post came in")
-    let x ={
-       a: db.escape(req.params.id).replace(/'/g, "")
+    let params ={
+       id: db.escape(req.params.id).replace(/'/g, "")
     }
-    let sql = "CREATE TABLE `nodetest`.`"+x.a+"` ( `id` INT NOT NULL AUTO_INCREMENT , PRIMARY KEY (`id`))"
+    let sql = "CREATE TABLE `nodetest`.`"+params.id+"` ( `id` INT NOT NULL AUTO_INCREMENT , PRIMARY KEY (`id`))"
     console.log(sql)
    
     db.query(sql,(err, result)=>{
