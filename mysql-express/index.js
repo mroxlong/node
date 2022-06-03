@@ -90,29 +90,46 @@ app.get("/message/:room/",(req, res)=>{
        room: sqlSanitize(req.params.room),
       
     }
-
     let messageSQL = "SELECT * from `"+params.room+"`"
    
     
-    const getUsername=(i)=>{
-        let unameSQL = "SELECT `username` FROM `anons` WHERE `id`=?"
-        db.query(unameSQL,i,(err, result)=>{
-        
-            if(err){
-                throw err
-            }
-            return result[0]
-            
-        })
-        db.destroy()
-    }
 
 
+  
      
     
 
+    const x = (messagesArr)=>{
+        let b = []
+        messagesArr.forEach(async(i)=>{
+           console.log(i.uid)
 
+           let username = (i)=>{
+               
+            let unameSQL = "SELECT `username` FROM `anons` WHERE `id`=?"
+            db.query(unameSQL, i.uid,(err, result)=>{
+        
+                if(err){
+                    throw err
+                }
+                let obj = {
+                    "id":i.id,
+                    "username":result[0].username,
+                    "value":i.value
+                    
+                }
+                return obj
 
+            })
+           }
+           username(i)
+          
+          
+        })
+        console.log(b)
+    
+    }
+  
    
     db.query(messageSQL,(err, result)=>{
            
@@ -122,18 +139,20 @@ app.get("/message/:room/",(req, res)=>{
             result.map((i)=>{
                 messagesArr.push(i)
             })
-            db.end()
+            
+          
+           
             res.json(
                 {
-                    "rooms": 
-                        {
-                            "messages":messagesArr,
-                            "Username":getUsername(messagesArr.uid)
-                        }
+                    "rooms":
+                            {
+                                "messages":x(messagesArr)
+                            }
                 }
             )
             
     })
+   
 })
 
 
