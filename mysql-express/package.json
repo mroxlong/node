@@ -1,0 +1,19 @@
+{
+  "name": "mysql-express",
+  "version": "1.0.0",
+  "description": "Node Mysql Template",
+  "main": "index.js",
+  "scripts": {
+    "dev": "nodemon ./index.js"
+  },
+  "author": "Dylan Westraadt",
+  "license": "ISC",
+  "devDependencies": {
+    "express": "^4.18.1",
+    "nodemon": "^2.0.16"
+  },
+  "dependencies": {
+    "dotenv": "^16.0.1",
+    "mysql": "^2.18.1"
+  }
+}
