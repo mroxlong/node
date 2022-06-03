@@ -16,6 +16,16 @@ const db = mysql.createConnection({
 
 })
 
+/**
+ * Cleans string and formats user input for sql injections
+ * @param {string} value 
+ * @returns {string}
+ */
+const sqlSanitize = (value)=>{
+   const val =  db.escape(value).replace(/'/g, "")
+   return val
+}
+
 db.connect((err)=>{
     if(err){
         console.log(err)
@@ -23,7 +33,7 @@ db.connect((err)=>{
     console.log('Mysql initialized')
 })
 
-app.post("/db/:id",(req, res)=>{
+app.post("/room/:id",(req, res)=>{
     console.log("Post came in")
     let params ={
        id: db.escape(req.params.id).replace(/'/g, "")
@@ -40,6 +50,44 @@ app.post("/db/:id",(req, res)=>{
     })
 })
 
+
+
+app.post("/message/:room",(req, res)=>{
+    console.log("User creation init")
+    let msg = req.body.message
+    let params ={
+      
+       room: sqlSanitize(req.params.room),
+       message: sqlSanitize(req.body.message)
+    }
+    let sql = "INSERT INTO `"+params.room+"` (`id`, `uid`, `value`) VALUES (NULL, '2', '"+params.message+"')"
+    console.log(sql)
+   
+    db.query(sql,(err, result)=>{
+            if(err){
+                throw err
+            }
+            console.log(result);
+            res.sendStatus(200)
+    })
+})
+
+app.post("/anon/:username",(req, res)=>{
+    console.log("User creation init")
+    let params ={
+       username: db.escape(req.params.username).replace(/'/g, "")
+    }
+    let sql = "INSERT INTO `anons` (`id`, `username`) VALUES (NULL, '"+params.username+"')"
+    console.log(sql)
+   
+    db.query(sql,(err, result)=>{
+            if(err){
+                throw err
+            }
+            console.log(result);
+            res.sendStatus(200)
+    })
+})
 
 
 app.listen({port: process.env.port},()=>{
