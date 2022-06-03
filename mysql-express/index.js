@@ -28,7 +28,7 @@ app.post("/db/:id",(req, res)=>{
     let params ={
        id: db.escape(req.params.id).replace(/'/g, "")
     }
-    let sql = "CREATE TABLE `nodetest`.`"+params.id+"` ( `id` INT NOT NULL AUTO_INCREMENT , PRIMARY KEY (`id`))"
+    let sql = "CREATE TABLE `nodetest`.`"+params.id+" ( `id` INT NOT NULL AUTO_INCREMENT , `uid` INT(10) NOT NULL , `value` VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_general_nopad_ci NOT NULL , PRIMARY KEY (`id`))"
     console.log(sql)
    
     db.query(sql,(err, result)=>{
