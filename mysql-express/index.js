@@ -2,8 +2,10 @@ require('dotenv').config()
 const express = require('express');
 const mysql = require('mysql')
 const app = express();
+const bodyParser = require('body-parser');
+const json = require('body-parser/lib/types/json');
 
-app.get('')
+app.use(bodyParser.json())
 
 const db = mysql.createConnection({
     host:process.env.DBHOST,
@@ -20,13 +22,16 @@ db.connect((err)=>{
     console.log('Mysql initialized')
 })
 
-app.get("/mail/",(req, res)=>{
-    let sql = "CREATE DATABASE ?"
-    db.query(sql, req.params.db,(err, result)=>{
+app.post("/mail/",(req, res)=>{
+    console.log("Post came in")
+    
+    let sql = "CREATE "
+    db.query(sql, req.body.db,(err, result)=>{
             if(err){
                 throw err
             }
             console.log(result);
+            res.sendStatus(200)
     })
 })
 
