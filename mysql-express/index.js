@@ -24,12 +24,23 @@ const sqlSanitize = (value)=>{
    return val
 }
 
+
+/**
+ * Cleans string and formats user input for sql injections
+ * 
+ * @returns {error}
+ * @returns {string}
+ */
 db.connect((err)=>{
     if(err){
         console.log(err)
     }
     console.log('Mysql initialized')
 })
+
+
+
+
 
 app.post("/room/:id",(req, res)=>{
     console.log("Post came in")
@@ -71,25 +82,57 @@ app.get('/rooms',(req, res)=>{
 
 
 
-app.post("/message/:room",(req, res)=>{
+app.get("/message/:room/",(req, res)=>{
     console.log("User creation init")
-    let msg = req.body.message
+    let messagesArr = []
     let params ={
       
        room: sqlSanitize(req.params.room),
-       message: sqlSanitize(req.body.message)
+      
     }
 
-    let sql = "INSERT INTO `"+params.room+"` (`id`, `uid`, `value`) VALUES (NULL, '2', '"+params.message+"')"
-    console.log(sql)
+    let messageSQL = "SELECT * from `"+params.room+"`"
    
-    db.query(sql,(err, result)=>{
+    
+    const getUsername=(i)=>{
+        let unameSQL = "SELECT `username` FROM `anons` WHERE `id`=?"
+        db.query(unameSQL,i,(err, result)=>{
+        
             if(err){
                 throw err
             }
-            console.log(result);
+            return result[0]
+            
+        })
+        db.destroy()
+    }
+
+
+     
+    
+
+
+
+   
+    db.query(messageSQL,(err, result)=>{
+           
+            if(err){
+                throw err
+            }
+            result.map((i)=>{
+                messagesArr.push(i)
+            })
             db.end()
-            res.sendStatus(200)
+            res.json(
+                {
+                    "rooms": 
+                        {
+                            "messages":messagesArr,
+                            "Username":getUsername(messagesArr.uid)
+                        }
+                }
+            )
+            
     })
 })
 
@@ -114,9 +157,13 @@ app.post("/message/:room",(req, res)=>{
             }
             console.log(result);
             db.end()
+            
             res.sendStatus(200)
     })
 })
+
+
+
 
 app.post("/anon/:username",(req, res)=>{
     console.log("User creation init")
