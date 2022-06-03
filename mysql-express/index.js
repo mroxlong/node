@@ -11,7 +11,8 @@ const db = mysql.createConnection({
     host:process.env.DBHOST,
     database:process.env.DB,
     user:process.env.DBUSER,
-    password:process.env.DBPASS
+    password:process.env.DBPASS,
+    stringifyObjects: false,
 
 })
 
@@ -22,11 +23,13 @@ db.connect((err)=>{
     console.log('Mysql initialized')
 })
 
-app.post("/mail/",(req, res)=>{
+app.post("/db/:id",(req, res)=>{
     console.log("Post came in")
-    
-    let sql = "CREATE "
-    db.query(sql, req.body.db,(err, result)=>{
+    db.input
+    let sql = "CREATE TABLE `nodetest`.`?` ( `id` INT NOT NULL AUTO_INCREMENT , PRIMARY KEY (`id`))"
+    let x =req.params.id 
+   
+    db.query(sql,[x],(err, result)=>{
             if(err){
                 throw err
             }
