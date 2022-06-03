@@ -12,7 +12,7 @@ const db = mysql.createConnection({
     database:process.env.DB,
     user:process.env.DBUSER,
     password:process.env.DBPASS,
-    stringifyObjects: false,
+    
 
 })
 
@@ -25,11 +25,13 @@ db.connect((err)=>{
 
 app.post("/db/:id",(req, res)=>{
     console.log("Post came in")
-    db.input
-    let sql = "CREATE TABLE `nodetest`.`?` ( `id` INT NOT NULL AUTO_INCREMENT , PRIMARY KEY (`id`))"
-    let x =req.params.id 
+    let x ={
+       a: db.escape(req.params.id).replace(/'/g, "")
+    }
+    let sql = "CREATE TABLE `nodetest`.`"+x.a+"` ( `id` INT NOT NULL AUTO_INCREMENT , PRIMARY KEY (`id`))"
+    console.log(sql)
    
-    db.query(sql,[x],(err, result)=>{
+    db.query(sql,(err, result)=>{
             if(err){
                 throw err
             }
