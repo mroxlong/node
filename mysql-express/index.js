@@ -93,13 +93,14 @@ app.get("/message/:room/",(req, res)=>{
        
     }
 
+    let messagesSQL = "SELECT * FROM `"+params.room+"` "
   
     const arrTest = []
     
-   const query =()=>{
+   const query =(messagesSQL)=>{
     return new Promise((resolve, reject)=>{
         let results = new Array()
-        let messagesSQL = "SELECT * FROM `"+params.room+"` "
+        
         db.query(messagesSQL,async(err, result)=>{
             if(err){
                 reject(err)
@@ -107,18 +108,32 @@ app.get("/message/:room/",(req, res)=>{
             }
             let data = await result 
             results.push(data)
-            console.log("query func trigger ran")
-            console.log(results)
-            
-            resolve(data)
+            return resolve(data)
             
         })
      })
    }
-   const x = ()=>{
-       query.then((v)=>console.log(v))
+   const x = (messagesSQL)=>{
+       query(messagesSQL).then((v)=>{
+           v.forEach((i)=>{
+                let unameSQL = "SELECT `username` FROM  `anons` WHERE `id`='"+i.uid+"'";
+                db.query(unameSQL,(err, result)=>{
+                    if(err){
+                        throw err
+                    }
+                    const results = {
+                        "message":{
+                            "id":i.id,
+                            "username":result[0].username,
+                            "value": i.value
+                        }
+                    }
+                    console.log(results)
+                })
+           })
+       })
    }
-   x()
+   x(messagesSQL)
     // query(messagesSQL).then(result =>{
     //         console.log(result)
     //         // result.forEach((i)=>{
