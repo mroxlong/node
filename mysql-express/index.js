@@ -125,33 +125,38 @@ app.get("/message/:room/",(req, res)=>{
            username(i)
           
           
+        }).then(()=>{
+
+
+        db.query(messageSQL,(err, result)=>{
+           
+                if(err){
+                    throw err
+                }
+                result.map((i)=>{
+                    messagesArr.push(i)
+                })
+                
+              
+               
+                res.json(
+                    {
+                        "rooms":
+                                {
+                                    "messages":x(messagesArr)
+                                }
+                    }
+                )
+                
         })
-        console.log(b)
-    
-    }
+        
+        }
+
+        })
+        
   
    
-    db.query(messageSQL,(err, result)=>{
-           
-            if(err){
-                throw err
-            }
-            result.map((i)=>{
-                messagesArr.push(i)
-            })
-            
-          
-           
-            res.json(
-                {
-                    "rooms":
-                            {
-                                "messages":x(messagesArr)
-                            }
-                }
-            )
-            
-    })
+
    
 })
 
