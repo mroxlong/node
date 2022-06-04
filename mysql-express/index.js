@@ -75,7 +75,7 @@ app.get('/rooms/',(req, res)=>{
             console.log(arr);
             db.end()
             res.json({"rooms": arr})
-            res.sendStatus(200)
+           
             
     })
 })
@@ -99,60 +99,60 @@ app.get("/message/:room/",(req, res)=>{
      
     
 
-    const x = async(messagesArr)=>{
-        let b = []
-        messagesArr.forEach((i)=>{
-           console.log(i.uid)
+//     const x = async(messagesArr)=>{
+//         let b = []
+//         messagesArr.forEach((i)=>{
+//            console.log(i.uid)
 
-           let username = (i)=>{
+//            let username = (i)=>{
                
-            let unameSQL = "SELECT `username` FROM `anons` WHERE `id`=?"
+//             let unameSQL = "SELECT `username` FROM `anons` WHERE `id`=?"
            
-           }
-           username(i)
-           db.query(unameSQL, i.uid,(err, result)=>{
+//            }
+//            username(i)
+//            db.query(unameSQL, i.uid,(err, result)=>{
         
-            if(err){
-                throw err
-            }
-            let obj = {
-                "id":i.id,
-                "username":result[0].username,
-                "value":i.value
+//             if(err){
+//                 throw err
+//             }
+//             let obj = {
+//                 "id":i.id,
+//                 "username":result[0].username,
+//                 "value":i.value
                 
-            }
-            return obj
+//             }
+//             return obj
 
-        })
+//         })
           
-        }).then((username)=>{
+//         }).then((username)=>{
 
 
-        db.query(messageSQL,(err, result)=>{
+//         db.query(messageSQL,(err, result)=>{
            
-                if(err){
-                    throw err
-                }
-                result.map((i)=>{
-                    messagesArr.push(i)
-                })
+//                 if(err){
+//                     throw err
+//                 }
+//                 result.map((i)=>{
+//                     messagesArr.push(i)
+//                 })
                 
               
                
-                res.json(
-                    {
-                        "rooms":
-                                {
-                                    "messages":x(messagesArr)
-                                }
-                    }
-                )
+//                 res.json(
+//                     {
+//                         "rooms":
+//                                 {
+//                                     "messages":x(messagesArr)
+//                                 }
+//                     }
+//                 )
                 
-        })
+//         })
         
-        }
+//     })
 
-        })
+// })
         
   
    
