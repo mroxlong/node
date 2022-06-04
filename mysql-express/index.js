@@ -59,7 +59,7 @@ app.post("/room/:id",(req, res)=>{
     })
 })
 
-app.get('/rooms',(req, res)=>{
+app.get('/rooms/',(req, res)=>{
     let sql = "SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = '"+process.env.DB+"'"
     console.log(sql)
    
@@ -83,108 +83,81 @@ app.get('/rooms',(req, res)=>{
 
 
 app.get("/message/:room/",(req, res)=>{
- 
-   
-
-    
+    console.log("User creation init")
+    let messagesArr = []
     let params ={
       
        room: sqlSanitize(req.params.room),
-       
-    }
-
-    let messagesSQL = "SELECT * FROM `"+params.room+"` "
-  
-    const arrTest = []
-    
-   const query =(messagesSQL)=>{
-    return new Promise((resolve, reject)=>{
-        let results = new Array()
-        
-        db.query(messagesSQL,async(err, result)=>{
-            if(err){
-                reject(err)
-                throw err
-            }
-            let data = await result 
-            results.push(data)
-            return resolve(data)
-            
-        })
-     })
-   }
-   const x = (messagesSQL)=>{
-       query(messagesSQL).then((v)=>{
-           v.forEach((i)=>{
-                let unameSQL = "SELECT `username` FROM  `anons` WHERE `id`='"+i.uid+"'";
-                db.query(unameSQL,(err, result)=>{
-                    if(err){
-                        throw err
-                    }
-                    const results = {
-                        "message":{
-                            "id":i.id,
-                            "username":result[0].username,
-                            "value": i.value
-                        }
-                    }
-                    console.log(results)
-                })
-           })
-       })
-   }
-   x(messagesSQL)
-    // query(messagesSQL).then(result =>{
-    //         console.log(result)
-    //         // result.forEach((i)=>{
-               
-    //         //     let unameSQL = "SELECT `username` FROM  `anons` WHERE `id`='"+i.uid+"'"
-    //         //     db.query(unameSQL,(err, result)=>{
-    //         //         if(err){
-    //         //             throw err
-    //         //         }
-                    
-    //         //         const results = {
-    //         //             "message":{
-    //         //                 "id":i.id,
-    //         //                 "username":result[0].username,
-    //         //                 "value": i.value
-    //         //             }
-    //         //         }
-    //         //         arrTest.push(results)
-                   
-    
-                   
-    //         //     })
-    //         // })       
-            
-    // })
-   
-   
-})
-app.get('/username/:id',(req, res)=>{
-    let params ={
       
-        id: sqlSanitize(req.params.id),
-       
-     }
-     
-    let sql = "SELECT `username` FROM  `anons` WHERE `id`='"+params.id+"'"
-    
+    }
+    let messageSQL = "SELECT * from `"+params.room+"`"
    
-    db.query(sql,(err, result)=>{
+    
+
+
+  
+     
+    
+
+    const x = async(messagesArr)=>{
+        let b = []
+        messagesArr.forEach((i)=>{
+           console.log(i.uid)
+
+           let username = (i)=>{
+               
+            let unameSQL = "SELECT `username` FROM `anons` WHERE `id`=?"
+           
+           }
+           username(i)
+           db.query(unameSQL, i.uid,(err, result)=>{
+        
             if(err){
                 throw err
             }
+            let obj = {
+                "id":i.id,
+                "username":result[0].username,
+                "value":i.value
+                
+            }
+            return obj
 
-             
-            res.json({
-                "username":result[0].username
-            })
-            
+        })
+          
+        }).then((username)=>{
+
+
+        db.query(messageSQL,(err, result)=>{
+           
+                if(err){
+                    throw err
+                }
+                result.map((i)=>{
+                    messagesArr.push(i)
+                })
+                
+              
+               
+                res.json(
+                    {
+                        "rooms":
+                                {
+                                    "messages":x(messagesArr)
+                                }
+                    }
+                )
+                
+        })
         
-    })
-     
+        }
+
+        })
+        
+  
+   
+
+   
 })
 
 
