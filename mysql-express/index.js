@@ -83,81 +83,93 @@ app.get('/rooms',(req, res)=>{
 
 
 app.get("/message/:room/",(req, res)=>{
-    console.log("User creation init")
-    let messagesArr = []
+ 
+   
+
+    
     let params ={
       
        room: sqlSanitize(req.params.room),
-      
+       
     }
-    let messageSQL = "SELECT * from `"+params.room+"`"
-   
-    
-
 
   
-     
+    const arrTest = []
     
-
-    const x = (messagesArr)=>{
-        let b = []
-        messagesArr.forEach(async(i)=>{
-           console.log(i.uid)
-
-           let username = (i)=>{
+   const query =()=>{
+    return new Promise((resolve, reject)=>{
+        let results = new Array()
+        let messagesSQL = "SELECT * FROM `"+params.room+"` "
+        db.query(messagesSQL,async(err, result)=>{
+            if(err){
+                reject(err)
+                throw err
+            }
+            let data = await result 
+            results.push(data)
+            console.log("query func trigger ran")
+            console.log(results)
+            
+            resolve(data)
+            
+        })
+     })
+   }
+   const x = ()=>{
+       query.then((v)=>console.log(v))
+   }
+   x()
+    // query(messagesSQL).then(result =>{
+    //         console.log(result)
+    //         // result.forEach((i)=>{
                
-            let unameSQL = "SELECT `username` FROM `anons` WHERE `id`=?"
-            db.query(unameSQL, i.uid,(err, result)=>{
-        
-                if(err){
-                    throw err
-                }
-                let obj = {
-                    "id":i.id,
-                    "username":result[0].username,
-                    "value":i.value
+    //         //     let unameSQL = "SELECT `username` FROM  `anons` WHERE `id`='"+i.uid+"'"
+    //         //     db.query(unameSQL,(err, result)=>{
+    //         //         if(err){
+    //         //             throw err
+    //         //         }
                     
-                }
-                return obj
+    //         //         const results = {
+    //         //             "message":{
+    //         //                 "id":i.id,
+    //         //                 "username":result[0].username,
+    //         //                 "value": i.value
+    //         //             }
+    //         //         }
+    //         //         arrTest.push(results)
+                   
+    
+                   
+    //         //     })
+    //         // })       
+            
+    // })
+   
+   
+})
+app.get('/username/:id',(req, res)=>{
+    let params ={
+      
+        id: sqlSanitize(req.params.id),
+       
+     }
+     
+    let sql = "SELECT `username` FROM  `anons` WHERE `id`='"+params.id+"'"
+    
+   
+    db.query(sql,(err, result)=>{
+            if(err){
+                throw err
+            }
 
+             
+            res.json({
+                "username":result[0].username
             })
-           }
-           username(i)
-          
-          
-        }).then(()=>{
-
-
-        db.query(messageSQL,(err, result)=>{
-           
-                if(err){
-                    throw err
-                }
-                result.map((i)=>{
-                    messagesArr.push(i)
-                })
-                
-              
-               
-                res.json(
-                    {
-                        "rooms":
-                                {
-                                    "messages":x(messagesArr)
-                                }
-                    }
-                )
-                
-        })
+            
         
-        }
-
-        })
-        
-  
-   
-
-   
+    })
+     
 })
 
 
